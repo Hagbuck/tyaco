@@ -3,25 +3,40 @@ const router = express.Router();
 
 module.exports = () => {
 
-    router.get('/', (req, res) => {
+	/** 
+	 * Get all constraints
+	 */
+	router.get('/', (req, res) => {
 
-    });
+	});
 
-    router.get('/:id', (req, res) => {
+	/** 
+	 * Get a specific constraint
+	 */
+	router.get('/:constraint_id', (req, res) => {
 
-    });
+	});
 
-    router.delete('/:id', (req, res) => {
+	/** 
+	 * Create a new constrainte
+	 */
+	router.post('/', (req, res) => {
 
-    });
+	});
 
-    router.post('/', (req, res) => {
+	/** 
+	 * Edit a specific contraints
+	 */
+	router.delete('/:constraint_id', (req, res) => {
 
-    });
+	});
 
-    router.put('/:id', (req, res) => {
+	/** 
+	 * Delete a specific contraints
+	 */
+	router.delete('/:constraint_id', (req, res) => {
 
-    });
+	});
 
-    return router;
+	return router;
 };

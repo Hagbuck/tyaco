@@ -7,6 +7,6 @@ const contest = require('./routes/contest');
 module.exports = () => {
     router.use('/user',user());
     router.use('/contest',contest());
-    
+
     return router;
 };

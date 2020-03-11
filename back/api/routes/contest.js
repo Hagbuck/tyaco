@@ -3,25 +3,47 @@ const router = express.Router();
 
 module.exports = () => {
 
-    router.get('/', (req, res) => {
+	/** 
+	 * Get all contests
+	 */
+	router.get('/', (req, res) => {
 
-    });
+	});
 
-    router.get('/:id', (req, res) => {
+	/** 
+	 * Get a specific contest
+	 */
+	router.get('/:contest_id', (req, res) => {
 
-    });
+	});
 
-    router.delete('/:id', (req, res) => {
+	/** 
+	 * Create a new contest
+	 */
+	router.post('/', (req, res) => {
 
-    });
+	});
 
-    router.post('/', (req, res) => {
+	/** 
+	 * Edit a specific contest
+	 */
+	router.put('/:contest_id', (req, res) => {
 
-    });
+	});
 
-    router.put('/:id', (req, res) => {
+	/** 
+	 * Delete a specific contest
+	 */
+	router.delete('/:contest_id', (req, res) => {
 
-    });
+	});
 
-    return router;
+	/** 
+	 * Submit a submission for a specific contest
+	 */
+	router.post('/:contest_id/submission', (req, res) => {
+
+	});
+
+	return router;
 };
