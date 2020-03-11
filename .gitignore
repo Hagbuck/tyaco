@@ -1,0 +1,6 @@
+# Sublime component
+*.sublime-project
+*.sublime-workspace
+
+# Node modules
+*node_modules
