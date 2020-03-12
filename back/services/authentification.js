@@ -1,9 +1,6 @@
 
 /**
  * [This middleware validate the authentification via token and check the rights of the user to access the ressource]
- * @param  {[Object]}   req  [description]
- * @param  {[Object]}   res  [description]
- * @param  {Function} 	next [description]
  */
 module.exports = (req, res, next) => {
 	const token = req.query.token;
@@ -11,5 +8,5 @@ module.exports = (req, res, next) => {
 	if(token)
 		next();
 	else
-		res.sendStatus(403);
+		res.sendStatus(401); // Should register or send token
 }

@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+	node:
+		image: node:latest
+		networks:
+			tyaco-network
+		ports:
+			- "2020:2020"
+
+	mongodb:
+		image: mongo:latest
+		container_name: mongodb
+		restart: always
+		 environment:
+			MONGO_INITDB_ROOT_USERNAME: chef
+			MONGO_INITDB_ROOT_PASSWORD: chef
+			MONGO_INITDB_DATABASE: tyaco
+
+		networks:
+			tyaco-network
+		ports:
+			- "2021:27017"
+		volumes:
+			- ./back/db/init.js:/docker-entrypoint-initdb.d/init.js:ro
+			- "tyaco:/data/db"
+
+networks:
+	tyaco-network:
+
+volumes :
+	tyaco:
