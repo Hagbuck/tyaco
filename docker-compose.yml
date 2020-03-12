@@ -1,32 +1,40 @@
 version: '3'
 
+# TODO : Create a Dockerfile per container, build the images, and link them to the docker-compose with : build: ./dockerFilePath
+
 services:
-	node:
-		image: node:latest
-		networks:
-			tyaco-network
-		ports:
-			- "2020:2020"
+    node:
+        image: node:latest
+        container_name: tyaco_nodejs
 
-	mongodb:
-		image: mongo:latest
-		container_name: mongodb
-		restart: always
-		 environment:
-			MONGO_INITDB_ROOT_USERNAME: chef
-			MONGO_INITDB_ROOT_PASSWORD: chef
-			MONGO_INITDB_DATABASE: tyaco
+        working_dir: /app
+        volumes:
+            - ./back/:/app
 
-		networks:
-			tyaco-network
-		ports:
-			- "2021:27017"
-		volumes:
-			- ./back/db/init.js:/docker-entrypoint-initdb.d/init.js:ro
-			- "tyaco:/data/db"
+        networks:
+            - tyaco-network
+        ports:
+            - "2020:2020"
+
+        command: bash -c "npm install && npm start" # Change it because it's dirty !
+
+    mongodb:
+        image: mongo:latest
+        container_name: tyaco_mongodb
+        restart: always
+        environment:
+            MONGO_INITDB_DATABASE: tyaco
+
+        networks:
+            - tyaco-network
+        ports:
+            - "2021:27017"
+        volumes:
+            - ./back/db/init.js:/docker-entrypoint-initdb.d/init.js
+            - ./data:/data/db
 
 networks:
-	tyaco-network:
+    tyaco-network:
 
 volumes :
-	tyaco:
+    tyaco:
