@@ -4,23 +4,21 @@ version: '3'
 
 services:
     node:
-        image: node:latest
-        container_name: tyaco_nodejs
+        image: tyaco-node:latest
+        container_name: tyaco_backend
 
         working_dir: /app
-        volumes:
-            - ./back/:/app
 
         networks:
             - tyaco-network
         ports:
             - "2020:2020"
 
-        command: bash -c "npm install && npm start" # Change it because it's dirty !
+        command: npm start
 
     mongodb:
         image: mongo:latest
-        container_name: tyaco_mongodb
+        container_name: tyaco_database
         restart: always
         environment:
             MONGO_INITDB_DATABASE: tyaco
@@ -30,7 +28,7 @@ services:
         ports:
             - "2021:27017"
         volumes:
-            - ./back/db/init.js:/docker-entrypoint-initdb.d/init.js
+            - ./db/init.js:/docker-entrypoint-initdb.d/init.js
             - ./data:/data/db
 
 networks:

@@ -1,6 +1,33 @@
 # What is Tyaco ?
 
-**Tyaco (Train Yourself And Challenge Others)** is a software that provide challenges regularly
+**Tyaco (Train Yourself And Challenge Others)** is a software that provide challenges regularly.
+
+**Tyaco** is an *REST-API* dockerized. The backend is a *NodeJS* server and the Database is a *MongoDB*.
+
+# How to deploy Tyaco ?
+
+## Step 1 - Install docker and docker-compose on your environment
+
+```
+# Distribution : Arch / Manjaro
+sudo pacman -Syu docker docker-compose
+```
+
+## Step 2 - Build the backend image
+
+```
+cd tyaco/back/
+./build-image.sh
+```
+
+## Step 3 - Launch the container from a Docker Compose File
+
+```
+cd tyaco/
+docker-compose up -d
+```
+
+Now you Server is deployed and reachable at `localhost:2020`.
 
 # Features to implements and API entryPoints
 
@@ -76,7 +103,7 @@
 
 	"contributors" : [], //Liste accounts name OR ID
 	"constraints" : [],  //Liste constraint ID
-	
+
 	"submissions" : []
 }
 ```
@@ -123,3 +150,4 @@
 * Store photo on DD
 * Jury system
 * Search system with query parameter ex : /api/user/?firstname="Anthony"
+* Configuration files
