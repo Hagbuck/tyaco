@@ -1,11 +1,11 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 
-const user = require('./routes/user');
-const contest = require('./routes/contest');
+const user       = require('./routes/user');
+const contest    = require('./routes/contest');
 const constraint = require('./routes/constraint');
 const submission = require('./routes/submission');
-const comment = require('./routes/comment');
+const comment    = require('./routes/comment');
 
 module.exports = () => {
     router.use('/user',user());
