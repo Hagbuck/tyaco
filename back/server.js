@@ -1,6 +1,7 @@
 const express     = require('express');
 const controllers = require('./api');
 const config      = require('./config/config');
+const mongoose    = require('mongoose');
 
 async function startServer() {
     const app = express();
@@ -17,4 +18,4 @@ async function startServer() {
     });
   }
 
-  startServer();
+startServer();

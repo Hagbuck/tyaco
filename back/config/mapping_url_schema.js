@@ -1,6 +1,6 @@
 const user = require('./schemas/user');
 
 module.exports = {
-    "/api/user/register" : user.register,
-    "/api/user/connexion": user.connexion
+    "/user/register" : user.register,
+    "/user/connexion": user.connexion
 };

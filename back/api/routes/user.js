@@ -1,5 +1,8 @@
 const express = require('express');
 const router  = express.Router();
+const bcrypt  = require('bcrypt');
+const salt_round = 10;
+const User = require('../../models/user');
 
 module.exports = () => {
 
@@ -7,18 +10,22 @@ module.exports = () => {
 	 * Register a new user
 	 */
 	router.post('/register', (req, res) => {
-		const username  = req.body.username;
-		const password  = req.body.password;
-		const email     = req.body.email;
-		const firstname = req.body.firstname; // Optionnal
-		const lastname  = req.body.lastname;  // Optionnal
 
-		const str = username + ' : ' + password + ' : ' + email + ' : ' + firstname + ' : ' + lastname;
+		/* Hash password with bcrypt */
+		bcrypt.hash(req.body.password, salt_round, (err, hash) => {
+			if(err) res.sendStatus(500);
+			else {
+				/* Set the hash password instead of plain text password */
+				req.body.password = hash;
 
-		console.log(str);
-
-		res.send(str);
-
+				/* Save user into DB */
+				let user = new User(req.body);
+				user.save((err, user) => {
+					if(err) res.sendStatus(500);
+					res.sendStatus(200);
+				});
+			}
+		});
 	});
 
 	/**
@@ -29,6 +36,16 @@ module.exports = () => {
 		const password = req.query.password;
 
 		res.send('Your token is : ' + username + ':' + password);
+	});
+
+	/**
+	 * Get all  users
+	 */
+	router.get('/', (req, res) => {
+		User.find({}, (err, users) => {
+			if(err) res.sendStatus(500);
+			res.status(200).json(users);
+		});
 	});
 
 	/**

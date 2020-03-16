@@ -19,17 +19,17 @@ services:
     mongodb:
         image: mongo:latest
         container_name: tyaco_database
-        restart: always
+        #restart: always
         environment:
             MONGO_INITDB_DATABASE: tyaco
 
         networks:
             - tyaco-network
         ports:
-            - "2021:27017"
+            - "27017:27017"
         volumes:
             - ./db/init.js:/docker-entrypoint-initdb.d/init.js
-            - ./data:/data/db
+            #- ./data:/data/db
 
 networks:
     tyaco-network:
