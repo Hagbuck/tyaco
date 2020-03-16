@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 /* Routes for middleware */
 const authentification = require('../services/authentification');
-const validate_json    = require('../services/validate_json');
+//const validate_json    = require('../services/validate_json');
 
 module.exports = (app) => {
 
@@ -25,5 +25,5 @@ module.exports = (app) => {
     // Middleware that transforms the raw string of req.body into json
     app.use(bodyParser.json());
     // Load API routes
-    app.use('/api', [authentification, validate_json], routes());
+    app.use('/api', [authentification], routes());
 };

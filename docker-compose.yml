@@ -1,9 +1,7 @@
 version: '3'
 
-# TODO : Create a Dockerfile per container, build the images, and link them to the docker-compose with : build: ./dockerFilePath
-
 services:
-    node:
+    backend:
         image: tyaco-node:latest
         container_name: tyaco_backend
 
@@ -16,7 +14,7 @@ services:
 
         command: npm start
 
-    mongodb:
+    database:
         image: mongo:latest
         container_name: tyaco_database
         #restart: always
