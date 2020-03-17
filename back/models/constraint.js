@@ -11,7 +11,8 @@ const ConstraintSchema = mongoose.Schema({
 	},
 	author_id : {
 		type : mongoose.Schema.Types.ObjectId,
-		ref : 'User'
+		ref : 'User',
+		required : true
 	},
 
 	create_date: {
@@ -20,8 +21,8 @@ const ConstraintSchema = mongoose.Schema({
 	}
 }, { versionKey : false });
 
-// Export User model
-let User = module.exports = mongoose.model('Constraint', ConstraintSchema, 'constraint');
+// Export Constaint model
+let Constraint = module.exports = mongoose.model('Constraint', ConstraintSchema, 'constraint');
 
 module.exports.get = function (callback, limit) {
 	Constraint.find(callback).limit(limit);
