@@ -27,10 +27,10 @@ services:
             - "27017:27017"
         volumes:
             - ./db/init.js:/docker-entrypoint-initdb.d/init.js
-            #- ./data:/data/db
+            # - ./db_tyaco:/data/db
 
 networks:
     tyaco-network:
 
 volumes :
-    tyaco:
+    db_tyaco:

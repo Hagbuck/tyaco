@@ -151,3 +151,5 @@ Now you Server is deployed and reachable at `localhost:2020`.
 * Jury system
 * Search system with query parameter ex : /api/user/?firstname="Anthony"
 * Configuration files
+* A constraint title can't be modify except by an admin
+* A constraint can't be remove if it's link to a contest
