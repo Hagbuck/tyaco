@@ -15,9 +15,24 @@ module.exports = () => {
 		if(req.query.author_id) filter.author_id = req.query.author_id;
 
 
-		Contest.find(filter, (err, contests) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(contests);
+		// TODO : Populate if parameter !
+		Contest.find(filter)
+		.populate({
+			path : 'constraints',
+			populate : {
+				path : 'author_id',
+				select : '_id username email firstname lastname'
+			}
+		})
+		.populate({
+			path : 'author_id',
+			select : '_id username email firstname lastname'
+		})
+		.then( (contests) => {
+			res.status(200).json(contests);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
