@@ -46,7 +46,7 @@ module.exports = () => {
 	 * Edit a specific contest
 	 */
 	router.put('/:contest_id', (req, res) => {
-		Contest.updateOne({ _id : req.params.contest_id }, req.body, (err, contest) => {
+		Contest.findByIdAndUpdate(req.params.contest_id, req.body, (err, contest) => {
 			if(err) res.status(500).json(err);
 			else res.status(200).json(contest);
 		});
@@ -56,7 +56,7 @@ module.exports = () => {
 	 * Delete a specific contest
 	 */
 	router.delete('/:contest_id', (req, res) => {
-		Contest.deleteOne({ _id : req.params.contest_id }, req.body, (err, constraint) => {
+		Contest.findByIdAndDelete(req.params.contest_id, req.body, (err, constraint) => {
 			if(err) res.status(500).json(err);
 			else res.status(200).json(constraint);
 		});

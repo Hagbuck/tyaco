@@ -70,7 +70,7 @@ module.exports = () => {
 	 * Edit a specific user
 	 */
 	router.put('/:user_id', (req, res) => {
-		User.updateOne({ _id : req.params.user_id }, req.body, (err, user) => {
+		User.findByIdAndUpdate(req.params.user_id, req.body, (err, user) => {
 			if(err) res.status(500).json(err);
 			else res.status(200).json(user);
 		});
@@ -100,7 +100,7 @@ module.exports = () => {
 	 * Delete a specific user
 	 */
 	router.delete('/:user_id', (req, res) => {
-		User.deleteOne({ _id : req.params.user_id }, (err, user) => {
+		User.findByIdAndDelete(req.params.user_id, (err, user) => {
 			if(err) res.status(500).json(err);
 			else res.status(200).json(user);
 		});

@@ -46,7 +46,7 @@ module.exports = () => {
 	 */
 	router.put('/:constraint_id', (req, res) => {
 		// TODO : Title can't be edit except by an admin
-		Constraint.updateOne({ _id : req.params.constraint_id }, req.body, (err, constraint) => {
+		Constraint.findByIdAndUpdate(req.params.constraint_id, req.body, (err, constraint) => {
 			if(err) res.status(500).json(err);
 			else res.status(200).json(constraint);
 		});
@@ -77,7 +77,7 @@ module.exports = () => {
 	 */
 	router.delete('/:constraint_id', (req, res) => {
 		// TODO : Only if any contest linked to it
-		Constraint.deleteOne({ _id : req.params.constraint_id }, (err, constraint) => {
+		Constraint.findByIdAndDelete(req.params.constraint_id, (err, constraint) => {
 			if(err) res.status(500).json(err);
 			else res.status(200).json(constraint);
 		});
