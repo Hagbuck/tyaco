@@ -40,9 +40,12 @@ module.exports = () => {
 	 * Get a specific contest
 	 */
 	router.get('/:contest_id', (req, res) => {
-		Contest.find({ _id : req.params.contest_id }, (err, contests) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(contests);
+		Contest.findById(req.params.contest_id)
+		.then( (contests) => {
+			res.status(200).json(contests);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -51,9 +54,13 @@ module.exports = () => {
 	 */
 	router.post('/', (req, res) => {
 		let contest = new Contest(req.body);
-		contest.save((err, contest) => {
-			if(err) res.status(500).json(err);
-			else res.sendStatus(200);
+
+		contest.save()
+		.then( (contest) => {
+			res.sendStatus(200);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -61,9 +68,12 @@ module.exports = () => {
 	 * Edit a specific contest
 	 */
 	router.put('/:contest_id', (req, res) => {
-		Contest.findByIdAndUpdate(req.params.contest_id, req.body, (err, contest) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(contest);
+		Contest.findByIdAndUpdate(req.params.contest_id, req.body)
+		.then( (contest) => {
+			res.status(200).json(contest);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -71,9 +81,12 @@ module.exports = () => {
 	 * Delete a specific contest
 	 */
 	router.delete('/:contest_id', (req, res) => {
-		Contest.findByIdAndDelete(req.params.contest_id, req.body, (err, constraint) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(constraint);
+		Contest.findByIdAndDelete(req.params.contest_id, req.body)
+		.then( (contest) => {
+			res.status(200).json(contest);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
