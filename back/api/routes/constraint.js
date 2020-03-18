@@ -2,6 +2,8 @@ const express    = require('express');
 const router     = express.Router();
 const Constraint = require('../../models/constraint');
 
+const AUTHOR_SELECT = '_id username email firstname lastname';
+
 module.exports = () => {
 
 	/**
@@ -14,9 +16,16 @@ module.exports = () => {
 		if(req.query.title) filter.title         = req.query.title;
 		if(req.query.author_id) filter.author_id = req.query.author_id;
 
-		Constraint.find(filter, (err, constraints) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(constraints);
+		Constraint.find(filter)
+		.populate({
+			path : 'author_id',
+			select : AUTHOR_SELECT
+		})
+		.then( (constraints) => {
+			res.status(200).json(constraints);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -24,9 +33,16 @@ module.exports = () => {
 	 * Get a specific constraint
 	 */
 	router.get('/:constraint_id', (req, res) => {
-		Constraint.findOne({ _id : req.params.constraint_id }, (err, constraint) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(constraint);
+		Constraint.findById(req.params.constraint_id)
+		.populate({
+			path : 'author_id',
+			select : AUTHOR_SELECT
+		})
+		.then( (constraint) => {
+			res.status(200).json(constraint);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -35,9 +51,13 @@ module.exports = () => {
 	 */
 	router.post('/', (req, res) => {
 		let constraint = new Constraint(req.body);
-		constraint.save((err, constraint) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(constraint);
+
+		constraint.save()
+		.then( (constraint) => {
+			res.status(200).json(constraint);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -46,9 +66,12 @@ module.exports = () => {
 	 */
 	router.put('/:constraint_id', (req, res) => {
 		// TODO : Title can't be edit except by an admin
-		Constraint.findByIdAndUpdate(req.params.constraint_id, req.body, (err, constraint) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(constraint);
+		Constraint.findByIdAndUpdate(req.params.constraint_id, req.body)
+		 .then( (constraint) => {
+			res.status(200).json(constraint);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -63,10 +86,14 @@ module.exports = () => {
 		if(req.query.author_id) filter.author_id = req.query.author_id;
 
 		if(filter.title || filter.author_id){
-			Constraint.deleteMany(filter, (err, constraints) => {
-				if(err) res.status(500).json(err);
-				else res.status(200).json(constraints);
+			Constraint.deleteMany(filter)
+			.then( (constraints) => {
+				res.status(200).json(constraints);
+			})
+			.catch( (err) => {
+				res.status(500).json(err);
 			});
+
 		} else {
 			res.status(401).json({error : 'title or author_id parameter should be passed !'});
 		}
@@ -77,9 +104,12 @@ module.exports = () => {
 	 */
 	router.delete('/:constraint_id', (req, res) => {
 		// TODO : Only if any contest linked to it
-		Constraint.findByIdAndDelete(req.params.constraint_id, (err, constraint) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(constraint);
+		Constraint.findByIdAndDelete(req.params.constraint_id)
+		.then( (constraint) => {
+			res.status(200).json(constraint);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
