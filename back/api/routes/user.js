@@ -20,9 +20,12 @@ module.exports = () => {
 
 				/* Save user into DB */
 				let user = new User(req.body);
-				user.save((err, user) => {
-					if(err) res.status(500).json(err);
-					else res.sendStatus(200);
+				user.save()
+				.then( (user) => {
+					res.sendStatus(200);
+				})
+				.catch( (err) => {
+					res.status(500).json(err);
 				});
 			}
 		});
@@ -50,9 +53,12 @@ module.exports = () => {
 		if(req.query.firstname) filter.firstname = req.query.firstname;
 		if(req.query.lastname) filter.lastname   = req.query.lastname;
 
-		User.find(filter, (err, users) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(users);
+		User.find(filter)
+		.then( (users) => {
+			res.status(200).json(users);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -60,9 +66,13 @@ module.exports = () => {
 	 * Get a specific user
 	 */
 	router.get('/:user_id', (req, res) => {
-		User.findOne({ _id : req.params.user_id }, (err, user) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(user);
+		// TODO : if no user, it return null, should return {} ?
+		User.findById(req.params.user_id)
+		.then( (user) => {
+			res.status(200).json(user);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -70,9 +80,12 @@ module.exports = () => {
 	 * Edit a specific user
 	 */
 	router.put('/:user_id', (req, res) => {
-		User.findByIdAndUpdate(req.params.user_id, req.body, (err, user) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(user);
+		User.findByIdAndUpdate(req.params.user_id, req.body)
+		.then( (user) => {
+			res.status(200).json(user);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
@@ -87,9 +100,12 @@ module.exports = () => {
 		if(req.query.email) filter.email       = req.query.email;
 
 		if(filter.username || filter.email){
-			User.deleteOne(filter, (err, user) => {
-				if(err) res.status(500).json(err);
-				else res.status(200).json(user);
+			User.deleteOne(filter)
+			.then( (user) => {
+				res.status(200).json(user);
+			})
+			.catch( (err) => {
+				res.status(500).json(err);
 			});
 		} else {
 			res.status(401).json({error : 'Username or email parameter should be passed !'});
@@ -100,9 +116,12 @@ module.exports = () => {
 	 * Delete a specific user
 	 */
 	router.delete('/:user_id', (req, res) => {
-		User.findByIdAndDelete(req.params.user_id, (err, user) => {
-			if(err) res.status(500).json(err);
-			else res.status(200).json(user);
+		User.findByIdAndDelete(req.params.user_id)
+		.then( (user) => {
+			res.status(200).json(user);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
 		});
 	});
 
