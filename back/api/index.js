@@ -6,6 +6,7 @@ const contest    = require('./routes/contest');
 const constraint = require('./routes/constraint');
 const submission = require('./routes/submission');
 const comment    = require('./routes/comment');
+const vote       = require('./routes/vote');
 
 module.exports = () => {
     router.use('/user',user());
@@ -13,6 +14,7 @@ module.exports = () => {
     router.use('/constraint',constraint());
     router.use('/submission',submission());
     router.use('/comment',comment());
+    router.use('/vote',vote());
 
     return router;
 };

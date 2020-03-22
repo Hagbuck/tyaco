@@ -82,7 +82,7 @@ module.exports = () => {
 	 * Delete a specific contest
 	 */
 	router.delete('/:contest_id', (req, res) => {
-		Contest.findByIdAndDelete(req.params.contest_id, req.body)
+		Contest.findByIdAndDelete(req.params.contest_id)
 		.then( (contest) => {
 			res.status(200).json(contest);
 		})

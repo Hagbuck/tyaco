@@ -21,7 +21,7 @@ module.exports = () => {
 	 * Delete a specific comment
 	 */
 	router.delete('/:comment_id', (req, res) => {
-		Comment.findByIdAndDelete(req.params.comment_id, req.body)
+		Comment.findByIdAndDelete(req.params.comment_id)
 		.then( (comment) => {
 			res.status(200).json(comment);
 		})
