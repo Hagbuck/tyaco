@@ -1,6 +1,7 @@
-const express = require('express');
-const router  = express.Router();
-const Contest = require('../../models/contest');
+const express    = require('express');
+const router     = express.Router();
+const Contest    = require('../../models/contest');
+const Submission = require('../../models/submission');
 
 module.exports = () => {
 
@@ -95,7 +96,35 @@ module.exports = () => {
 	 */
 	router.post('/:contest_id/submission', (req, res) => {
 
+		let item = req.body;
+		// Check if the JSON item contain the contest_id, otherwise, specify it with the URL
+		if(!item.contest_id) item.contest_id = req.params.contest_id;
+
+		let submission = new Submission(item);
+
+		submission.save()
+		.then( (submission) => {
+			res.status(200).json(submission);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
+		});
 	});
+
+	/**
+	 * Get all submissions from a contest
+	 */
+	 router.get('/:contest_id/submission', (req, res) => {
+		 let filter = { contest_id : req.params.contest_id };
+
+		 Submission.find(filter)
+		 .then( (submissions) => {
+			 res.status(200).json(submissions);
+		 })
+		 .catch( (err) => {
+			 res.status(500).json(err);
+		 });
+	 });
 
 	return router;
 };
