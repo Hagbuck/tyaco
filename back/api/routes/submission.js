@@ -1,10 +1,11 @@
-const express    = require('express');
-const router     = express.Router();
+const express = require('express');
+const router  = express.Router();
+
 const Submission = require('../../models/submission');
 const Comment    = require('../../models/comment');
 const Vote       = require('../../models/vote');
 
-const AUTHOR_SELECT = '_id username email firstname lastname';
+const deepsearch = require('../../config/deepsearch');
 
 module.exports = () => {
 
@@ -15,6 +16,7 @@ module.exports = () => {
 		let filter = { submission_id : req.params.submission_id };
 
 		Comment.find(filter)
+		.populate((req.query.deepsearch == 'true') ? deepsearch.author : null) // Only the author should be populate. Indeed we already know for which submission we are talking about.
 		.then( (comments) => {
 			res.status(200).json(comments);
 		})
@@ -94,10 +96,7 @@ module.exports = () => {
 		let filter = { submission_id : req.params.submission_id };
 
 		Vote.find(filter)
-		.populate({
-			path : 'author_id',
-			select : AUTHOR_SELECT
-		})
+		.populate((req.query.deepsearch == 'true') ? deepsearch.author : null) // Only the author should be populate. Indeed we already know for which submission we are talking about.
 		.then( (votes) => {
 			res.status(200).json(votes);
 		})

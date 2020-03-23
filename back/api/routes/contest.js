@@ -1,7 +1,10 @@
-const express    = require('express');
-const router     = express.Router();
+const express = require('express');
+const router  = express.Router();
+
 const Contest    = require('../../models/contest');
 const Submission = require('../../models/submission');
+
+const deepsearch = require('../../config/deepsearch');
 
 module.exports = () => {
 
@@ -15,20 +18,9 @@ module.exports = () => {
 		if(req.query.is_open) filter.is_open     = req.query.is_open;
 		if(req.query.author_id) filter.author_id = req.query.author_id;
 
-
-		// TODO : Populate if parameter !
 		Contest.find(filter)
-		.populate({
-			path : 'constraints',
-			populate : {
-				path : 'author_id',
-				select : '_id username email firstname lastname'
-			}
-		})
-		.populate({
-			path : 'author_id',
-			select : '_id username email firstname lastname'
-		})
+		.populate((req.query.deepsearch == 'true') ? deepsearch.author : null)
+		.populate((req.query.deepsearch == 'true') ? deepsearch.constraint : null)
 		.then( (contests) => {
 			res.status(200).json(contests);
 		})
@@ -42,6 +34,8 @@ module.exports = () => {
 	 */
 	router.get('/:contest_id', (req, res) => {
 		Contest.findById(req.params.contest_id)
+		.populate((req.query.deepsearch == 'true') ? deepsearch.author : null)
+		.populate((req.query.deepsearch == 'true') ? deepsearch.constraint : null)
 		.then( (contests) => {
 			res.status(200).json(contests);
 		})
@@ -118,13 +112,15 @@ module.exports = () => {
 		 let filter = { contest_id : req.params.contest_id };
 
 		 Submission.find(filter)
-		 .then( (submissions) => {
-			 res.status(200).json(submissions);
-		 })
-		 .catch( (err) => {
-			 res.status(500).json(err);
-		 });
-	 });
+		.populate((req.query.deepsearch == 'true') ? deepsearch.contest : null)
+		.populate((req.query.deepsearch == 'true') ? deepsearch.author : null)
+		.then( (submissions) => {
+			res.status(200).json(submissions);
+		})
+		.catch( (err) => {
+			res.status(500).json(err);
+		});
+	});
 
 	return router;
 };

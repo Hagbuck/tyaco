@@ -2,7 +2,7 @@ const express    = require('express');
 const router     = express.Router();
 const Constraint = require('../../models/constraint');
 
-const AUTHOR_SELECT = '_id username email firstname lastname';
+const deepsearch = require('../../config/deepsearch');
 
 module.exports = () => {
 
@@ -17,10 +17,7 @@ module.exports = () => {
 		if(req.query.author_id) filter.author_id = req.query.author_id;
 
 		Constraint.find(filter)
-		.populate({
-			path : 'author_id',
-			select : AUTHOR_SELECT
-		})
+		.populate((req.query.deepsearch == 'true') ? deepsearch.author : null)
 		.then( (constraints) => {
 			res.status(200).json(constraints);
 		})
@@ -34,10 +31,7 @@ module.exports = () => {
 	 */
 	router.get('/:constraint_id', (req, res) => {
 		Constraint.findById(req.params.constraint_id)
-		.populate({
-			path : 'author_id',
-			select : AUTHOR_SELECT
-		})
+		.populate((req.query.deepsearch == 'true') ? deepsearch.author : null)
 		.then( (constraint) => {
 			res.status(200).json(constraint);
 		})

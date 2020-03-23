@@ -9,7 +9,7 @@ const ContestSchema = mongoose.Schema({
 		type : String,
 		required : true
 	},
-	constraints : [{
+	constraints_id : [{
 		type : mongoose.Schema.Types.ObjectId,
 		ref : 'Constraint'
 	}],
