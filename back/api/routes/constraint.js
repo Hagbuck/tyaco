@@ -1,8 +1,11 @@
 const express    = require('express');
 const router     = express.Router();
+
+const User       = require('../../models/user');
 const Constraint = require('../../models/constraint');
 
-const deepsearch = require('../../config/deepsearch');
+const check_db_exists = require('../../services/check_db_exists');
+const deepsearch      = require('../../config/deepsearch');
 
 module.exports = () => {
 
@@ -44,15 +47,28 @@ module.exports = () => {
 	 * Create a new constraint
 	 */
 	router.post('/', (req, res) => {
-		let constraint = new Constraint(req.body);
 
-		constraint.save()
-		.then( (constraint) => {
-			res.status(200).json(constraint);
+		Promise.all([check_db_exists(User, req.body.author_id)]) /* Check if user exist*/
+		.then( (values) => {
+			/* If all check are OK*/
+			 if(!values.includes(false)){
+
+				/* Create and save Constraint Object */
+				let constraint = new Constraint(req.body);
+
+				constraint.save()
+				.then( (constraint) => {
+					res.status(200).json(constraint);
+				})
+				.catch( (err) => {
+					res.status(500).json(err);
+				});
+
+			} else {
+				res.status(403).json( { error : `Tyaco server refuse to create this Constraint because the user (${req.body.author_id}) doesn\'t exist.` } );
+			}
 		})
-		.catch( (err) => {
-			res.status(500).json(err);
-		});
+		.catch( (reject) => { res.status(500).json(reject); });
 	});
 
 	/**

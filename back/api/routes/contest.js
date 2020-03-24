@@ -1,10 +1,13 @@
 const express = require('express');
 const router  = express.Router();
 
+const User       = require('../../models/user');
+const Constraint = require('../../models/constraint');
 const Contest    = require('../../models/contest');
 const Submission = require('../../models/submission');
 
-const deepsearch = require('../../config/deepsearch');
+const check_db_exists = require('../../services/check_db_exists');
+const deepsearch      = require('../../config/deepsearch');
 
 module.exports = () => {
 
@@ -48,11 +51,52 @@ module.exports = () => {
 	 * Create a new contest
 	 */
 	router.post('/', (req, res) => {
-		let contest = new Contest(req.body);
 
-		contest.save()
-		.then( (contest) => {
-			res.sendStatus(200);
+		/* Create an array of all promsie to check database existence */
+		let promises = [check_db_exists(User, req.body.author_id)];
+		req.body.constraints_id.forEach((constraint_id) => { promises.push(check_db_exists(Constraint, constraint_id)); });
+
+		Promise.all(promises)
+		.then( (values) => {
+			/* If all check are OK*/
+			if(!values.includes(false)){
+				/* Create and save Contest Object */
+				let contest = new Contest(req.body);
+
+				contest.save()
+				.then( (contest) => {
+					res.status(200).json(contest);
+				})
+				.catch( (err) => {
+					res.status(500).json(err);
+				});
+			} else {
+
+				/* Build error message */
+				let err_json = {
+					error : {
+						message : 'Tyaco server refuse to create this Contest',
+					}
+				};
+
+				/* Get All ids which aren't in the database from the values array : */
+				let err_idx = values.map((e, i) => e === false ? i : -1).filter(index => index !== -1);
+
+				err_idx.forEach( (i) => {
+					if(i == 0) { err_json.error.user = { id : req.body.author_id, message : 'Doesn\'t exists into database' }; }
+					else {
+						if(!Array.isArray(err_json.error.constraints))
+							err_json.error.constraints = [];
+
+						err_json.error.constraints.push({
+							id : req.body.constraints_id[i - 1], /* Because the first element of the array is the user */
+							message : 'Doesn\'t exists into database'
+						});
+					}
+				});
+
+				res.status(403).json(err_json);
+			}
 		})
 		.catch( (err) => {
 			res.status(500).json(err);
@@ -89,20 +133,48 @@ module.exports = () => {
 	 * Submit a submission for a specific contest
 	 */
 	router.post('/:contest_id/submission', (req, res) => {
-
 		let item = req.body;
 		// Check if the JSON item contain the contest_id, otherwise, specify it with the URL
 		if(!item.contest_id) item.contest_id = req.params.contest_id;
 
-		let submission = new Submission(item);
+		/* Create an array of all promises to check database existence */
+		let promises = [check_db_exists(User, item.author_id),		/* User check */
+						check_db_exists(Contest, item.contest_id)	/* Contest check */
+					   ];
 
-		submission.save()
-		.then( (submission) => {
-			res.status(200).json(submission);
+		Promise.all(promises)
+		.then( (values) => {
+			/* If all check are OK*/
+			if(!values.includes(false)){
+				/* Create and save Submission Object */
+				let submission = new Submission(item);
+
+				submission.save()
+				.then( (submission) => {
+					res.status(200).json(submission);
+				})
+				.catch( (err) => {
+					res.status(500).json(err);
+				});
+
+			} else {
+				/* Build error message */
+				let err_json = {
+					error : {
+						message : 'Tyaco server refuse to create this Submission',
+					}
+				};
+
+				if(values[0] == false) { err_json.error.user = { id : item.author_id, message : 'Doesn\'t exists into database' }; }
+				if(values[1] == false) { err_json.error.contest = { id : item.contest_id, message : 'Doesn\'t exists into database' }; }
+
+				res.status(403).json(err_json);
+			}
 		})
 		.catch( (err) => {
 			res.status(500).json(err);
 		});
+
 	});
 
 	/**
