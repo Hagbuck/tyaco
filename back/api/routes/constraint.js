@@ -76,7 +76,7 @@ module.exports = () => {
 	 */
 	router.put('/:constraint_id', (req, res) => {
 		// TODO : Title can't be edit except by an admin
-		Constraint.findByIdAndUpdate(req.params.constraint_id, req.body)
+		Constraint.findByIdAndUpdate(req.params.constraint_id, req.body, { new : true })
 		 .then( (constraint) => {
 			res.status(200).json(constraint);
 		})

@@ -6,6 +6,9 @@ Logger = Logger()
 
 from scenario.Scenario import Scenario
 
+from DAO.DAOUser import DAOUser
+from DAO.DAOConstraint import DAOConstraint
+
 from models.User import User
 from models.Constraint import Constraint
 
@@ -13,28 +16,29 @@ class UserCreateConstraints(Scenario):
 	def __init__(self):
 		super().__init__()
 
-		self.user = User()
-		self.constraint = Constraint()
-
 	def execute(self):
+
+		user = User()
+		dao_user = DAOUser()
+		constraint = Constraint()
+		dao_constraint = DAOConstraint()
 
 		super().print_execute_title()
 
-		self.execute_use_case(self.user.register_with_bad_parameter, exit_on_fail = True)
-		self.constraint.author_id = self.user._id
-		self.constraint.author_id = self.user._id
-		self.constraint.author_id = self.user._id
+		self.execute_use_case(dao_user.register_with_bad_parameter, user, exit_on_fail = True)
+		constraint.author_id = user._id
 
-		self.execute_use_case(self.constraint.create_constraint)
-		self.execute_use_case(self.constraint.update_constraint, 'New description')
-		self.execute_use_case(self.constraint.delete_constraint)
+		self.execute_use_case(dao_constraint.create_constraint, constraint)
 
-		self.execute_use_case(self.constraint.create_constraint)
+		constraint.description = 'New description'
+		self.execute_use_case(dao_constraint.update_constraint_description, constraint)
+		self.execute_use_case(dao_constraint.delete_constraint, constraint)
 
-		self.constraint.title += '2'
-		self.execute_use_case(self.constraint.create_constraint)
-		self.execute_use_case(self.constraint.delete_all_constraint_from_user_id)
+		self.execute_use_case(dao_constraint.create_constraint, constraint)
+		constraint.title += '2'
+		self.execute_use_case(dao_constraint.create_constraint, constraint)
+		self.execute_use_case(dao_constraint.delete_all_constraint_from_user_id, constraint)
 
-		self.execute_use_case(self.user.delete_user)
+		self.execute_use_case(dao_user.delete_user, user)
 
 		super().print_execute_ending()

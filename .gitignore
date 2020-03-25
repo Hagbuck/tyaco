@@ -13,3 +13,4 @@ back/test.js
 
 # Python tests environment
 tests/tyaco-tests-env
+__pycache__
