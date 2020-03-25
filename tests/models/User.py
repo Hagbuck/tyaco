@@ -8,7 +8,7 @@ Logger = Logger()
 
 class User:
 	def __init__(self):
-		self.user_id   = 'noid'
+		self._id   = 'noid'
 		self.username  = 'TyacoUser'
 		self.password  = "123Soleil"
 		self.email     = 'tyaco.test@hackug.fr'
@@ -31,8 +31,9 @@ class User:
 		# User created
 		if res.status_code == 200:
 			obj = res.json()
-			self.user_id = obj['_id']
-			Logger.success('User created id : ' + self.user_id)
+			Logger.info(str(obj))
+			self._id = obj['_id']
+			Logger.success('User created id : ' + self._id)
 			return True
 
 		# User already exist
@@ -44,7 +45,7 @@ class User:
 		return False
 
 	def update_user_firstame(self, firstname):
-		res = requests.put(build_url('user/' + self.user_id), json={"firstname" : firstname})
+		res = requests.put(build_url('user/' + self._id), json={"firstname" : firstname})
 
 		if res.status_code == 200:
 			obj = res.json()
@@ -62,7 +63,7 @@ class User:
 			return False
 
 	def get_user_by_id(self):
-		res = requests.get(build_url('user/' + self.user_id))
+		res = requests.get(build_url('user/' + self._id))
 
 		if res.status_code == 200:
 			Logger.success(str(res.json()))
@@ -92,9 +93,11 @@ class User:
 			return False
 
 	def delete_user(self):
-		res = requests.delete(build_url('user/' + self.user_id))
+		res = requests.delete(build_url('user/' + self._id))
 
 		if res.status_code == 200:
+			obj = res.json()
+			Logger.info(str(obj))
 			Logger.success('User deleted')
 			return True
 		else:

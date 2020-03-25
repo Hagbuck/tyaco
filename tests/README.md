@@ -2,11 +2,11 @@
 
 The test cases are written with *python 3.8*
 
-# How to launch the test case ?
+# How to launch the test cases ?
 
 ## Step 1 : Prepare your virtualenv
 
-To ensure that you will install and use a specific environment dedicated for the Tyaco tests suit, we will used python's **virtualenv**.
+To ensure that you will install and use a specific environment dedicated for the Tyaco tests suit, we will use python's **virtualenv**.
 
 ```shell
 # Creation of the virtualenv
