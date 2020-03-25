@@ -22,7 +22,7 @@ module.exports = () => {
 				let user = new User(req.body);
 				user.save()
 				.then( (user) => {
-					res.sendStatus(200);
+					res.status(200).json(user);
 				})
 				.catch( (err) => {
 					res.status(500).json(err);
@@ -54,6 +54,7 @@ module.exports = () => {
 		if(req.query.lastname) filter.lastname   = req.query.lastname;
 
 		User.find(filter)
+		.select('-password')
 		.then( (users) => {
 			res.status(200).json(users);
 		})
@@ -68,6 +69,7 @@ module.exports = () => {
 	router.get('/:user_id', (req, res) => {
 		// TODO : if no user, it return null, should return {} ?
 		User.findById(req.params.user_id)
+		.select('-password')
 		.then( (user) => {
 			res.status(200).json(user);
 		})
@@ -80,7 +82,7 @@ module.exports = () => {
 	 * Edit a specific user
 	 */
 	router.put('/:user_id', (req, res) => {
-		User.findByIdAndUpdate(req.params.user_id, req.body)
+		User.findByIdAndUpdate(req.params.user_id, req.body, { new : true })
 		.then( (user) => {
 			res.status(200).json(user);
 		})
