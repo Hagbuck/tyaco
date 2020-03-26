@@ -7,22 +7,28 @@ Logger = Logger()
 from scenario.Scenario import Scenario
 
 from DAO.DAOUser import DAOUser
-from models.User import User
 
 class UserCreationEditionDeletion(Scenario):
 	def __init__(self):
 		super().__init__()
 
 	def execute(self):
-
-		user = User()
 		dao_user = DAOUser()
+
+		user = {
+			"username": "TyacoUser",
+			"password" : "123Soleil",
+			"email" : "tyaco.test@hackug.fr",
+			"firstname" : "Anthony",
+			"lastname" : "Vuillemin",
+			"bad" : "bad"
+		}
 
 		super().print_execute_title()
 
 		self.execute_use_case(dao_user.register_with_bad_parameter, user, exit_on_fail = True)
 
-		user.firstname = 'Paul'
+		user['firstname'] = 'Paul'
 		self.execute_use_case(dao_user.update_user_firstame, user)
 		self.execute_use_case(dao_user.get_user_by_id, user)
 		self.execute_use_case(dao_user.get_user_by_email, user)
