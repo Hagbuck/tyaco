@@ -8,7 +8,7 @@ module.exports = () => {
 	 * Edit a specific comment
 	 */
 	router.put('/:comment_id', (req, res) => {
-		Comment.findByIdAndUpdate(req.params.comment_id, req.body)
+		Comment.findByIdAndUpdate(req.params.comment_id, req.body, { new : true })
 		.then( (comment) => {
 			res.status(200).json(comment);
 		})

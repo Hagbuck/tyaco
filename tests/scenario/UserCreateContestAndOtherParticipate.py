@@ -10,6 +10,7 @@ from DAO.DAOConstraint import DAOConstraint
 from DAO.DAOUser import DAOUser
 from DAO.DAOContest import DAOContest
 from DAO.DAOSubmission import DAOSubmission
+from DAO.DAOComment import DAOComment
 
 class UserCreateContestAndOtherParticipate(Scenario):
 	def __init__(self):
@@ -20,6 +21,7 @@ class UserCreateContestAndOtherParticipate(Scenario):
 		dao_contest    = DAOContest()
 		dao_constraint = DAOConstraint()
 		dao_submission = DAOSubmission()
+		dao_comment    = DAOComment()
 
 		super().print_execute_title()
 
@@ -58,23 +60,45 @@ class UserCreateContestAndOtherParticipate(Scenario):
 			"submission_cloture_date" : "2020-03-19T00:00:00.000Z",
 		}
 
+		comment = {
+			"comment" : "Impressive picture ! Congratulation"
+		}
+
+		# User creation
 		self.execute_use_case(dao_user.register_with_bad_parameter, user, exit_on_fail = True)
+
+		# Constraint creation
 		constraint['author_id'] = user['_id']
-		contest['author_id'] = user['_id']
-
 		self.execute_use_case(dao_constraint.create_constraint, constraint, exit_on_fail = True)
+
+		# Contest creation
+		contest['author_id'] = user['_id']
 		contest['constraints_id'] = [constraint['_id']]
-
 		self.execute_use_case(dao_contest.create_contest, contest, exit_on_fail = True)
-		submission['contest_id'] = contest['_id']
 
+		# Creation second Submitter user
 		self.execute_use_case(dao_user.register_with_bad_parameter, submitter_user, exit_on_fail = True)
+
+		# Submitter user submit for the contest
+		submission['contest_id'] = contest['_id']
 		submission['author_id'] = submitter_user['_id']
 		self.execute_use_case(dao_contest.submit, submission)
 
+		# Submitter update is  submission description
 		submission['description'] = "This is a picture of the moon"
 		self.execute_use_case(dao_submission.update_submission_description, submission)
 
+		# User comment the submitter submission
+		comment['author_id'] = user['_id']
+		comment['submission_id'] = submission['_id']
+		self.execute_use_case(dao_submission.comment_submission, comment)
+
+		# User update is comment
+		comment['comment'] = 'Mmmmmmm, you may be should turn off the nosie canceling'
+		self.execute_use_case(dao_comment.update_comment_comment, comment)
+
+		# Full deletion
+		self.execute_use_case(dao_comment.delete_comment, comment)
 		self.execute_use_case(dao_submission.delete_submission, submission)
 		self.execute_use_case(dao_contest.delete_contest, contest)
 		self.execute_use_case(dao_constraint.delete_constraint, constraint)
