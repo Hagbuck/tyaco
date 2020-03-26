@@ -78,7 +78,7 @@ module.exports = () => {
 	 * Edit a submission
 	 */
 	router.put('/:submission_id', (req, res) => {
-		Submission.findByIdAndUpdate(req.params.submission_id, req.body)
+		Submission.findByIdAndUpdate(req.params.submission_id, req.body, { new : true })
 		.then( (submission) => {
 			res.status(200).json(submission);
 		})

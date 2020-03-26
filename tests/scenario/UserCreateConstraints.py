@@ -41,7 +41,6 @@ class UserCreateConstraints(Scenario):
 
 		self.execute_use_case(dao_user.register_with_bad_parameter, user, exit_on_fail = True)
 
-
 		constraint['author_id'] = user['_id']
 		constraint2['author_id'] = user['_id']
 		self.execute_use_case(dao_constraint.create_constraint, constraint)

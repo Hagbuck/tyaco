@@ -25,8 +25,11 @@ class DAOConstraint:
 			return True
 
 		# Constraint post failed
+		elif res.status_code == 500:
+			Logger.error(res.json())
+
 		else:
-			Logger.error(str(res.json()))
+			Logger.error(res.text)
 
 		return False
 
