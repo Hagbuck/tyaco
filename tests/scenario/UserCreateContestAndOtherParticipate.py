@@ -11,6 +11,7 @@ from DAO.DAOUser import DAOUser
 from DAO.DAOContest import DAOContest
 from DAO.DAOSubmission import DAOSubmission
 from DAO.DAOComment import DAOComment
+from DAO.DAOVote import DAOVote
 
 class UserCreateContestAndOtherParticipate(Scenario):
 	def __init__(self):
@@ -22,6 +23,7 @@ class UserCreateContestAndOtherParticipate(Scenario):
 		dao_constraint = DAOConstraint()
 		dao_submission = DAOSubmission()
 		dao_comment    = DAOComment()
+		dao_vote    = DAOVote()
 
 		super().print_execute_title()
 
@@ -64,6 +66,8 @@ class UserCreateContestAndOtherParticipate(Scenario):
 			"comment" : "Impressive picture ! Congratulation"
 		}
 
+		vote = {}
+
 		# User creation
 		self.execute_use_case(dao_user.register_with_bad_parameter, user, exit_on_fail = True)
 
@@ -97,7 +101,13 @@ class UserCreateContestAndOtherParticipate(Scenario):
 		comment['comment'] = 'Mmmmmmm, you may be should turn off the nosie canceling'
 		self.execute_use_case(dao_comment.update_comment_comment, comment)
 
+		# Use vote the Submitter submission
+		vote['author_id'] = user['_id']
+		vote['submission_id'] = submission['_id']
+		self.execute_use_case(dao_submission.vote_submission, vote)
+
 		# Full deletion
+		self.execute_use_case(dao_vote.delete_vote, vote)
 		self.execute_use_case(dao_comment.delete_comment, comment)
 		self.execute_use_case(dao_submission.delete_submission, submission)
 		self.execute_use_case(dao_contest.delete_contest, contest)
