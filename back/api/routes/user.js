@@ -1,8 +1,12 @@
-const express    = require('express');
-const router     = express.Router();
+const express = require('express');
+const router  = express.Router();
+
 const bcrypt     = require('bcrypt');
 const salt_round = 10;
-const User       = require('../../models/user');
+
+const User = require('../../models/user');
+
+const jwt = require('../../services/jwt');
 
 module.exports = () => {
 
@@ -22,6 +26,9 @@ module.exports = () => {
 				let user = new User(req.body);
 				user.save()
 				.then( (user) => {
+					user = user.toObject();
+					delete user.password;
+
 					res.status(200).json(user);
 				})
 				.catch( (err) => {
@@ -34,18 +41,31 @@ module.exports = () => {
 	/**
 	 * Log an user and give him his token
 	 */
-	router.get('/connexion', (req, res) => {
-		const username = req.query.username;
-		const password = req.query.password;
+	router.post('/connexion', (req, res) => {
 
-		res.send('Your token is : ' + username + ':' + password);
+		/* Check user */
+		User.findOne({ username : req.body.username })
+		.then( (user) => {
+
+			/* Check password */
+			bcrypt.compare(req.body.password, user.password, (err, hash) => {
+				if(err) res.status(500).json({ error : err, message : `User(${req.body.username}) password doesn't match with provided password` });
+				else {
+					const token = jwt.create_token({ id : user._id, username : user.username });
+					res.status(200).json({ token : token });
+				}
+			})
+
+		})
+		.catch( (err) => {
+			res.status(500).send({ error : err, message : `User(${req.body.username}) not found` });
+		});
 	});
 
 	/**
 	 * Get all  users
 	 */
 	router.get('/', (req, res) => {
-
 		let filter = {};
 
 		if(req.query.username) filter.username   = req.query.username;
@@ -82,7 +102,10 @@ module.exports = () => {
 	 * Edit a specific user
 	 */
 	router.put('/:user_id', (req, res) => {
+		if(req.params.user_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't edit another User than you.`});
+
 		User.findByIdAndUpdate(req.params.user_id, req.body, { new : true })
+		.select('-password')
 		.then( (user) => {
 			res.status(200).json(user);
 		})
@@ -95,7 +118,6 @@ module.exports = () => {
 	 * Delete a specific user by email or username
 	 */
 	router.delete('/', (req, res) => {
-
 		let filter = {};
 
 		if(req.query.username) filter.username = req.query.username;

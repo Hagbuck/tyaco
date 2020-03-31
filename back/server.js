@@ -1,7 +1,10 @@
 const express     = require('express');
+const mongoose    = require('mongoose');
+
 const controllers = require('./api');
 const config      = require('./config/config');
-const mongoose    = require('mongoose');
+
+const logger = require('./services/logger');
 
 async function startServer() {
     const app = express();
@@ -14,7 +17,7 @@ async function startServer() {
         process.exit(1);
         return;
       }
-      console.log(`[INFO] Server listening on port: ${config.port}`);
+      logger.info(`Server listening on port: ${config.port}`);
     });
   }
 

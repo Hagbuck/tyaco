@@ -8,8 +8,8 @@
 # Data volume
 data/
 
-# Tests
-back/test.js
+# RSA Keys for JWT
+back/keys
 
 # Python tests environment
 tests/tyaco-tests-env
