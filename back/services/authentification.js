@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
 
 		if(!token){
 			logger.debug(logger_msg + ' : No token found');
-			res.status(401).json({error: "Please insert a token into the headers. To obtain your token, please login at /api/user/connexion. "});
+			return res.status(401).json({error: "Please insert a token into the headers. To obtain your token, please login at /api/user/connexion. "});
 		}
 
 		try{
@@ -29,7 +29,7 @@ module.exports = (req, res, next) => {
 
 		} catch (err){
 			logger.debug(logger_msg + ' : Token provided is unvalaible');
-			res.status(401).json(err);
+			return res.status(401).json(err);
 		}
 	}
 }

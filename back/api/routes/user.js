@@ -51,7 +51,11 @@ module.exports = () => {
 			bcrypt.compare(req.body.password, user.password, (err, hash) => {
 				if(err) res.status(500).json({ error : err, message : `User(${req.body.username}) password doesn't match with provided password` });
 				else {
-					const token = jwt.create_token({ id : user._id, username : user.username });
+					const token = jwt.create_token({
+						id : user._id,
+						username : user.username,
+						email : user.email
+					 });
 					res.status(200).json({ token : token });
 				}
 			})
@@ -102,7 +106,7 @@ module.exports = () => {
 	 * Edit a specific user
 	 */
 	router.put('/:user_id', (req, res) => {
-		if(req.params.user_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't edit another User than you.`});
+		if(req.params.user_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't edit another User than yourself.`});
 
 		User.findByIdAndUpdate(req.params.user_id, req.body, { new : true })
 		.select('-password')
@@ -124,6 +128,10 @@ module.exports = () => {
 		if(req.query.email) filter.email       = req.query.email;
 
 		if(filter.username || filter.email){
+			if(filter.username != res.locals.decoded_token.username
+			&& filter.email != res.locals.decoded_token.email)
+				return res.status(403).json({error : `You can't delete another User than you.`});
+
 			User.deleteOne(filter)
 			.then( (user) => {
 				res.status(200).json(user);
@@ -140,6 +148,8 @@ module.exports = () => {
 	 * Delete a specific user
 	 */
 	router.delete('/:user_id', (req, res) => {
+		if(req.params.user_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't delete another User than yourself.`});
+
 		User.findByIdAndDelete(req.params.user_id)
 		.then( (user) => {
 			res.status(200).json(user);
