@@ -8,7 +8,10 @@ module.exports = () => {
 	 * Delete a specific comment
 	 */
 	router.delete('/:vote_id', (req, res) => {
-		Vote.findByIdAndDelete(req.params.vote_id)
+		Vote.findOneAndDelete({
+			_id : req.params.vote_id,
+			author_id : res.locals.decoded_token.id
+		})
 		.then( (vote) => {
 			res.status(200).json(vote);
 		})

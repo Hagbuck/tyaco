@@ -31,8 +31,12 @@ module.exports = () => {
 	 * Add a new comment to a submission
 	 */
 	router.post('/:submission_id/comment', (req, res) => {
+		if(!req.body.author_id) req.body.author_id = res.locals.decoded_token.id;
+
+		else if(req.body.author_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't create a Submission for another User than yourself.`});
+
 		let item = req.body;
-		// Check if the JSON item contain the submission_id, otherwise, specify it with the URL
+		/* Check if the JSON item contain the submission_id, otherwise, specify it with the URL */
 		if(!item.submission_id) item.submission_id = req.params.submission_id;
 
 		/* Create an array of all promises to check database existence */
@@ -78,7 +82,10 @@ module.exports = () => {
 	 * Edit a submission
 	 */
 	router.put('/:submission_id', (req, res) => {
-		Submission.findByIdAndUpdate(req.params.submission_id, req.body, { new : true })
+		Submission.findOneAndUpdate({
+			_id : req.params.submission_id,
+			author_id : res.locals.decoded_token.id
+		}, req.body, { new : true })
 		.then( (submission) => {
 			res.status(200).json(submission);
 		})
@@ -91,7 +98,10 @@ module.exports = () => {
 	 * Remove a submission
 	 */
 	router.delete('/:submission_id', (req, res) => {
-		Submission.findByIdAndDelete(req.params.submission_id)
+		Submission.findOneAndDelete({
+			_id : req.params.submission_id,
+			author_id : res.locals.decoded_token.id
+		})
 		.then( (submission) => {
 			res.status(200).json(submission);
 		})
@@ -104,8 +114,12 @@ module.exports = () => {
 	 * Post a vote associate to a submission
 	 */
 	router.post('/:submission_id/vote', (req, res) => {
+		if(!req.body.author_id) req.body.author_id = res.locals.decoded_token.id;
+
+		else if(req.body.author_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't create a Vote for another User than yourself.`});
+
 		let item = req.body;
-		// Check if the JSON item contain the submission_id, otherwise, specify it with the URL
+		/* Check if the JSON item contain the submission_id, otherwise, specify it with the URL */
 		if(!item.submission_id) item.submission_id = req.params.submission_id;
 
 		/* Create an array of all promises to check database existence */

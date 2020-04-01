@@ -8,7 +8,10 @@ module.exports = () => {
 	 * Edit a specific comment
 	 */
 	router.put('/:comment_id', (req, res) => {
-		Comment.findByIdAndUpdate(req.params.comment_id, req.body, { new : true })
+		Comment.findByIdAndUpdate({
+			_id : req.params.comment_id,
+			author_id : res.locals.decoded_token.id
+		}, req.body, { new : true })
 		.then( (comment) => {
 			res.status(200).json(comment);
 		})
@@ -21,7 +24,10 @@ module.exports = () => {
 	 * Delete a specific comment
 	 */
 	router.delete('/:comment_id', (req, res) => {
-		Comment.findByIdAndDelete(req.params.comment_id)
+		Comment.findByIdAndDelete({
+			_id : req.params.comment_id,
+			author_id : res.locals.decoded_token.id
+		})
 		.then( (comment) => {
 			res.status(200).json(comment);
 		})

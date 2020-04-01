@@ -52,6 +52,10 @@ module.exports = () => {
 	 */
 	router.post('/', (req, res) => {
 
+		if(!req.body.author_id) req.body.author_id = res.locals.decoded_token.id;
+
+		else if(req.body.author_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't create a contest for another User than yourself.`});
+
 		/* Create an array of all promsie to check database existence */
 		let promises = [check_db_exists(User, req.body.author_id)];
 		req.body.constraints_id.forEach((constraint_id) => { promises.push(check_db_exists(Constraint, constraint_id)); });
@@ -107,7 +111,10 @@ module.exports = () => {
 	 * Edit a specific contest
 	 */
 	router.put('/:contest_id', (req, res) => {
-		Contest.findByIdAndUpdate(req.params.contest_id, req.body)
+		Contest.findOneAndUpdate({
+			_id : req.params.contest_id,
+			author_id : res.locals.decoded_token.id
+		}, req.body)
 		.then( (contest) => {
 			res.status(200).json(contest);
 		})
@@ -120,7 +127,10 @@ module.exports = () => {
 	 * Delete a specific contest
 	 */
 	router.delete('/:contest_id', (req, res) => {
-		Contest.findByIdAndDelete(req.params.contest_id)
+		Contest.findOneAndDelete({
+			_id : req.params.contest_id,
+			author_id : res.locals.decoded_token.id
+		},)
 		.then( (contest) => {
 			res.status(200).json(contest);
 		})
@@ -133,8 +143,12 @@ module.exports = () => {
 	 * Submit a submission for a specific contest
 	 */
 	router.post('/:contest_id/submission', (req, res) => {
+		if(!req.body.author_id) req.body.author_id = res.locals.decoded_token.id;
+
+		else if(req.body.author_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't create a contest for another User than yourself.`});
+
 		let item = req.body;
-		// Check if the JSON item contain the contest_id, otherwise, specify it with the URL
+		/* Check if the JSON item contain the contest_id, otherwise, specify it with the URL*/
 		if(!item.contest_id) item.contest_id = req.params.contest_id;
 
 		/* Create an array of all promises to check database existence */
