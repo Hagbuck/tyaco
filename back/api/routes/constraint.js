@@ -47,6 +47,7 @@ module.exports = () => {
 	 * Create a new constraint
 	 */
 	router.post('/', (req, res) => {
+		if(req.body.author_id != res.locals.decoded_token.id) return res.status(403).json({error : `You can't create a constraint for another User than yourself.`});
 
 		Promise.all([check_db_exists(User, req.body.author_id)]) /* Check if user exist*/
 		.then( (values) => {
@@ -76,7 +77,10 @@ module.exports = () => {
 	 */
 	router.put('/:constraint_id', (req, res) => {
 		// TODO : Title can't be edit except by an admin
-		Constraint.findByIdAndUpdate(req.params.constraint_id, req.body, { new : true })
+		Constraint.findOneAndUpdate({
+			_id: req.params.constraint_id,
+			author_id : res.locals.decoded_token.id	// To ensure the user can edit the constraint
+		}, req.body, { new : true })
 		 .then( (constraint) => {
 			res.status(200).json(constraint);
 		})
@@ -93,7 +97,8 @@ module.exports = () => {
 		let filter = {};
 
 		if(req.query.title) filter.title         = req.query.title;
-		if(req.query.author_id) filter.author_id = req.query.author_id;
+		//if(req.query.author_id) filter.author_id = req.query.author_id;
+		filter.author_id = res.locals.decoded_token.id;
 
 		if(filter.title || filter.author_id){
 			Constraint.deleteMany(filter)
@@ -113,8 +118,12 @@ module.exports = () => {
 	 * Delete a specific contraints
 	 */
 	router.delete('/:constraint_id', (req, res) => {
+
 		// TODO : Only if any contest linked to it
-		Constraint.findByIdAndDelete(req.params.constraint_id)
+		Constraint.findOneAndDelete({
+			_id: req.params.constraint_id,
+			author_id : res.locals.decoded_token.id	// To ensure the user can delete the constraint
+		})
 		.then( (constraint) => {
 			res.status(200).json(constraint);
 		})

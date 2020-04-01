@@ -24,15 +24,20 @@ class UserCreationEditionDeletion(Scenario):
 			"bad" : "bad"
 		}
 
+		headers = {
+			"token" : "bad123"
+		}
+
 		super().print_execute_title()
 
 		self.execute_use_case(dao_user.register_with_bad_parameter, user, exit_on_fail = True)
+		headers['token'] = self.execute_use_case(dao_user.connexion_get_token, user, exit_on_fail = True)
 
 		user['firstname'] = 'Paul'
-		self.execute_use_case(dao_user.update_user_firstame, user)
-		self.execute_use_case(dao_user.get_user_by_id, user)
-		self.execute_use_case(dao_user.get_user_by_email, user)
-		self.execute_use_case(dao_user.get_user_by_username, user)
-		self.execute_use_case(dao_user.delete_user, user)
+		self.execute_use_case(dao_user.update_user_firstame, user, headers)
+		self.execute_use_case(dao_user.get_user_by_id, user, headers)
+		self.execute_use_case(dao_user.get_user_by_email, user, headers)
+		self.execute_use_case(dao_user.get_user_by_username, user, headers)
+		self.execute_use_case(dao_user.delete_user, user, headers)
 
 		super().print_execute_ending()

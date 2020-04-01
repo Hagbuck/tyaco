@@ -34,9 +34,31 @@ class DAOUser:
 
 		return False
 
-	def update_user_firstame(self, user):
-		res = requests.put(build_url('user/' + user['_id']), json={"firstname" : user['firstname']})
+	def connexion_get_token(self, user):
+		# Post the request
+		res = requests.post(build_url('user/connexion'), json = user)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
+		# User logged
+		if res.status_code == 200:
+			obj = res.json()
+			Logger.info(str(obj))
+			Logger.success('User (' + user['_id'] + ') logged and get token : ' + obj['token'])
+			return obj['token']
 
+		# User can't login
+		elif res.status_code == 500:
+			Logger.error(res.json())
+
+		else:
+			Logger.error(res.text)
+
+		return False
+
+
+	def update_user_firstame(self, user, headers):
+		res = requests.put(build_url('user/' + user['_id']), json={"firstname" : user['firstname']}, headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
+		
 		if res.status_code == 200:
 			obj = res.json()
 			Logger.info(str(obj))
@@ -53,8 +75,9 @@ class DAOUser:
 			Logger.error(res.content)
 			return False
 
-	def get_user_by_id(self, user):
-		res = requests.get(build_url('user/' + user['_id']))
+	def get_user_by_id(self, user, headers):
+		res = requests.get(build_url('user/' + user['_id']), headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		if res.status_code == 200:
 			Logger.success(str(res.json()))
@@ -63,8 +86,9 @@ class DAOUser:
 			Logger.error(res.content)
 			return False
 
-	def get_user_by_email(self, user):
-		res = requests.get(build_url('user/', 'email={}'.format(user['email'])))
+	def get_user_by_email(self, user, headers):
+		res = requests.get(build_url('user/', 'email={}'.format(user['email'])), headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		if res.status_code == 200:
 			Logger.success(str(res.json()))
@@ -73,8 +97,9 @@ class DAOUser:
 			Logger.error(res.content)
 			return False
 
-	def get_user_by_username(self, user):
-		res = requests.get(build_url('user/'), 'username=' + user['username'])
+	def get_user_by_username(self, user, headers):
+		res = requests.get(build_url('user/'), 'username=' + user['username'], headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		if res.status_code == 200:
 			Logger.success(str(res.json()))
@@ -83,8 +108,9 @@ class DAOUser:
 			Logger.error(res.content)
 			return False
 
-	def delete_user(self, user):
-		res = requests.delete(build_url('user/' + user['_id']))
+	def delete_user(self, user, headers):
+		res = requests.delete(build_url('user/' + user['_id']), headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		if res.status_code == 200:
 			obj = res.json()

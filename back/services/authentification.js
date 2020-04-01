@@ -8,6 +8,7 @@ module.exports = (req, res, next) => {
 
 	let logger_msg = `[${req.method}](${req.path})`;
 
+	/* These URL doesn't need a token to be reached */
 	if(req.path == '/user/connexion'
 	|| req.path == '/user/register'){
 		logger.debug(logger_msg);

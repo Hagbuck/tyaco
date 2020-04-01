@@ -11,10 +11,11 @@ class DAOConstraint:
 	def __init__(self):
 		pass
 
-	def create_constraint(self, constraint):
+	def create_constraint(self, constraint, headers):
 
 		# Post the request
-		res = requests.post(build_url('constraint'), json = constraint)
+		res = requests.post(build_url('constraint'), json = constraint, headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		# Constraint created
 		if res.status_code == 200:
@@ -33,8 +34,9 @@ class DAOConstraint:
 
 		return False
 
-	def update_constraint_description(self, constraint):
-		res = requests.put(build_url('constraint/' + constraint['_id']), json = {"description" : constraint['description']})
+	def update_constraint_description(self, constraint, headers):
+		res = requests.put(build_url('constraint/' + constraint['_id']), json = {"description" : constraint['description']}, headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		if res.status_code == 200:
 			obj = res.json()
@@ -53,8 +55,9 @@ class DAOConstraint:
 			Logger.error(res.content)
 			return False
 
-	def delete_constraint(self, constraint):
-		res = requests.delete(build_url('constraint/' + constraint['_id']))
+	def delete_constraint(self, constraint, headers):
+		res = requests.delete(build_url('constraint/' + constraint['_id']), headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		if res.status_code == 200:
 			Logger.info(str(res.json()))
@@ -64,8 +67,9 @@ class DAOConstraint:
 			Logger.error(res.content)
 			return False
 
-	def delete_all_constraint_from_user_id(self, constraint):
-		res = requests.delete(build_url('constraint', params = 'author_id={}'.format(constraint['author_id'])))
+	def delete_all_constraints_from_user_id(self, constraint, headers):
+		res = requests.delete(build_url('constraint', params = 'author_id={}'.format(constraint['author_id'])), headers = headers)
+		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
 
 		if res.status_code == 200:
 			Logger.info(str(res.json()))

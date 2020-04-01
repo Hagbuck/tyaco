@@ -12,8 +12,8 @@ class DAOComment:
 	def __init__(self):
 		pass
 
-	def update_comment_comment(self, comment):
-		res = requests.put(build_url('comment/' + comment['_id']), json={"comment" : comment['comment']})
+	def update_comment_comment(self, comment, headers):
+		res = requests.put(build_url('comment/' + comment['_id']), json={"comment" : comment['comment']}, headers = headers)
 
 		if res.status_code == 200:
 			obj = res.json()
@@ -31,8 +31,8 @@ class DAOComment:
 			Logger.error(res.content)
 			return False
 
-	def delete_comment(self, comment):
-		res = requests.delete(build_url('comment/' + comment['_id']))
+	def delete_comment(self, comment, headers):
+		res = requests.delete(build_url('comment/' + comment['_id']), headers = headers)
 
 		if res.status_code == 200:
 			obj = res.json()

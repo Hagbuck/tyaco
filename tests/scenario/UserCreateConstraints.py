@@ -29,6 +29,10 @@ class UserCreateConstraints(Scenario):
 			"bad" : "bad"
 		}
 
+		headers = {
+			"token" : "bad123"
+		}
+
 		constraint = {
 			"title" : "My testing contraint",
 			"description" : "This is an amazing description"
@@ -40,19 +44,20 @@ class UserCreateConstraints(Scenario):
 		}
 
 		self.execute_use_case(dao_user.register_with_bad_parameter, user, exit_on_fail = True)
+		headers['token'] = self.execute_use_case(dao_user.connexion_get_token, user, exit_on_fail = True)
 
 		constraint['author_id'] = user['_id']
 		constraint2['author_id'] = user['_id']
-		self.execute_use_case(dao_constraint.create_constraint, constraint)
+		self.execute_use_case(dao_constraint.create_constraint, constraint, headers)
 
 		constraint['description'] = 'New description'
-		self.execute_use_case(dao_constraint.update_constraint_description, constraint)
-		self.execute_use_case(dao_constraint.delete_constraint, constraint)
+		self.execute_use_case(dao_constraint.update_constraint_description, constraint, headers)
+		self.execute_use_case(dao_constraint.delete_constraint, constraint, headers)
 
-		self.execute_use_case(dao_constraint.create_constraint, constraint)
-		self.execute_use_case(dao_constraint.create_constraint, constraint2)
-		self.execute_use_case(dao_constraint.delete_all_constraint_from_user_id, constraint)
+		self.execute_use_case(dao_constraint.create_constraint, constraint, headers)
+		self.execute_use_case(dao_constraint.create_constraint, constraint2, headers)
+		self.execute_use_case(dao_constraint.delete_all_constraints_from_user_id, constraint, headers)
 
-		self.execute_use_case(dao_user.delete_user, user)
+		self.execute_use_case(dao_user.delete_user, user, headers)
 
 		super().print_execute_ending()

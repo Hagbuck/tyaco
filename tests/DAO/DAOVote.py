@@ -12,8 +12,8 @@ class DAOVote:
 	def __init__(self):
 		pass
 
-	def delete_vote(self, vote):
-		res = requests.delete(build_url('vote/' + vote['_id']))
+	def delete_vote(self, vote, headers):
+		res = requests.delete(build_url('vote/' + vote['_id']), headers = headers)
 
 		if res.status_code == 200:
 			obj = res.json()

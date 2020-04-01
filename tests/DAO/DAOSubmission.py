@@ -12,8 +12,8 @@ class DAOSubmission:
 	def __init__(self):
 		pass
 
-	def update_submission_description(self, submission):
-		res = requests.put(build_url('submission/' + submission['_id']), json={"description" : submission['description']})
+	def update_submission_description(self, submission, headers):
+		res = requests.put(build_url('submission/' + submission['_id']), json={"description" : submission['description']}, headers = headers)
 
 		if res.status_code == 200:
 			obj = res.json()
@@ -31,8 +31,8 @@ class DAOSubmission:
 			Logger.error(res.content)
 			return False
 
-	def delete_submission(self, submission):
-		res = requests.delete(build_url('submission/' + submission['_id']))
+	def delete_submission(self, submission, headers):
+		res = requests.delete(build_url('submission/' + submission['_id']), headers = headers)
 
 		if res.status_code == 200:
 			obj = res.json()
@@ -43,9 +43,9 @@ class DAOSubmission:
 			Logger.error(res.content)
 			return False
 
-	def comment_submission(self, comment):
+	def comment_submission(self, comment, headers):
 		# Post the request
-		res = requests.post(build_url('submission/{}/comment'.format(comment['submission_id'])), json = comment)
+		res = requests.post(build_url('submission/{}/comment'.format(comment['submission_id'])), json = comment, headers = headers)
 
 		# Comment created
 		if res.status_code == 200:
@@ -64,9 +64,9 @@ class DAOSubmission:
 
 		return False
 
-	def vote_submission(self, vote):
+	def vote_submission(self, vote, headers):
 		# Post the request
-		res = requests.post(build_url('submission/{}/vote'.format(vote['submission_id'])), json = vote)
+		res = requests.post(build_url('submission/{}/vote'.format(vote['submission_id'])), json = vote, headers = headers)
 
 		# Vote created
 		if res.status_code == 200:
@@ -85,8 +85,8 @@ class DAOSubmission:
 
 		return False
 
-	def get_all_comment_for_a_submission(self, submission):
-		res = requests.get(build_url('submission/{}/comment'.format(user['_id'])))
+	def get_all_comment_for_a_submission(self, submission, headers):
+		res = requests.get(build_url('submission/{}/comment'.format(user['_id'])), headers = headers)
 
 		if res.status_code == 200:
 			Logger.success(str(res.json()))

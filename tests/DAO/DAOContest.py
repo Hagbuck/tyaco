@@ -11,10 +11,10 @@ class DAOContest:
 	def __init__(self):
 		pass
 
-	def create_contest(self, contest):
+	def create_contest(self, contest, headers):
 
 		# Post the request
-		res = requests.post(build_url('contest'), json = contest)
+		res = requests.post(build_url('contest'), json = contest, headers = headers)
 
 		# contest created
 		if res.status_code == 200:
@@ -30,8 +30,8 @@ class DAOContest:
 
 		return False
 
-	def update_contest_description(self, contest):
-		res = requests.put(build_url('contest/' + contest['_id']), json = {"description" : contest['description']})
+	def update_contest_description(self, contest, headers):
+		res = requests.put(build_url('contest/' + contest['_id']), json = {"description" : contest['description']}, headers = headers)
 
 		if res.status_code == 200:
 			obj = res.json()
@@ -50,8 +50,8 @@ class DAOContest:
 			Logger.error(res.content)
 			return False
 
-	def delete_contest(self, contest):
-		res = requests.delete(build_url('contest/' + contest['_id']))
+	def delete_contest(self, contest, headers):
+		res = requests.delete(build_url('contest/' + contest['_id']), headers = headers)
 
 		if res.status_code == 200:
 			Logger.info(str(res.json()))
@@ -61,9 +61,9 @@ class DAOContest:
 			Logger.error(res.content)
 			return False
 
-	def submit(self, submission):
+	def submit(self, submission, headers):
 		# Post the submit
-		res = requests.post(build_url('contest/{}/submission'.format(submission['contest_id'])), json = submission)
+		res = requests.post(build_url('contest/{}/submission'.format(submission['contest_id'])), json = submission, headers = headers)
 
 		# Submission created
 		if res.status_code == 200:

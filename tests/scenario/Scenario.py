@@ -18,8 +18,8 @@ class Scenario:
 
 		Logger.INFO('Start use case {} : {}'.format(self.use_case_total, user_case_function.__name__))
 
-		success = user_case_function(*params)
-		if success:
+		res = user_case_function(*params)
+		if res != False:
 			self.use_case_success += 1
 		else:
 			if exit_on_fail:
@@ -27,6 +27,7 @@ class Scenario:
 				exit(0)
 
 		Logger.INFO(self.__bar_separator + '\n')
+		return res
 
 	def print_execute_title(self):
 		Logger.INFO(self.__bar_separator)
