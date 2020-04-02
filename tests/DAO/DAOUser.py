@@ -58,7 +58,7 @@ class DAOUser:
 	def update_user_firstame(self, user, headers):
 		res = requests.put(build_url('user/' + user['_id']), json={"firstname" : user['firstname']}, headers = headers)
 		Logger.success('Status code : {}'.format(res.status_code)) if res.status_code == 200 else Logger.error('Status code : {}'.format(res.status_code))
-		
+
 		if res.status_code == 200:
 			obj = res.json()
 			Logger.info(str(obj))

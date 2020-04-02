@@ -10,6 +10,9 @@ module.exports = async (app) => {
     await expressLoader(app);
     logger.info('Express loaded');
 
-    let db = await mongooseLoader();
+	// IF LOCAL RUNNING  -> localhost
+	// IF DOCKER RUNNING -> tyaco_database
+	// TODO : Use env variable
+    let db = await mongooseLoader('tyaco_database');
     logger.info('MongoDB connection success');
 };
