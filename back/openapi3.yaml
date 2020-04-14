@@ -1,0 +1,207 @@
+openapi: 3.0.0
+
+servers:
+# Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/CyClone1/Tyaco/1.0.0
+  - description: Main server
+    url: http://tyaco.fr/api/
+
+info:
+  description: Tyaco is a program that provide contests
+  version: "1.0.0"
+  title: Tyaco API
+  contact:
+    email: hackbug@hackbug.fr
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+paths:
+  ########## USER ##########
+  /user:
+    get:
+      summary: searches users
+      description: Get users stored. You can use different filter parameters
+      parameters:
+        - in: query
+          name: username
+          description: pass an optional search string to filter by username
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: email
+          description: pass an optional search string to filter by email
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: firstname
+          description: pass an optional search string to filter by fistname
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: lastname
+          description: pass an optional search string to filter by lastname
+          required: false
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: All users that match with filter parameters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserItem'
+        '400':
+          description: 'bad input parameter'
+
+    delete:
+      summary: Delete user
+      operationId: DeleteUser
+      description: Delete user
+      parameters:
+        - in: query
+          name: username
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: email
+          required: false
+          schema:
+            type: string
+      responses:
+        '400':
+          description: 'invalid input, object invalid'
+        '200':
+          description: 'User successfully removed'
+
+########## USER BY ID ##########
+  /user/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the user
+        schema:
+          type : integer
+          format: int64
+          minimum: 1
+
+    get:
+      summary: Get a specific user
+      operationId: GetUserById
+      description: Get a specific user
+      responses:
+        '200':
+          description: 'Return an user'
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/UserItem'
+        '400':
+          description': 'Bad input parameter'
+
+    put:
+      summary: Update an user
+      operationId: UpdateUser
+      description: Update an user
+      responses:
+        '400':
+          description: 'invalid input, object invalid'
+        '200':
+          description: 'User successfully updated'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserItem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserItem'
+        description: User update
+
+    delete:
+      summary: Delete a specific user
+      operationId: DeleteUserById
+      description: Delete a specific user
+      responses:
+        '400':
+          description: 'invalid input, object invalid'
+        '200':
+          description: 'User successfully removed'
+
+  /user/register:
+    post:
+      summary: Register a new user
+      description: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserItem'
+      responses:
+        '200':
+          description: an existing item already exists
+        '500':
+          description: 'The server cannot create the user'
+
+  /user/connexion:
+    post:
+      summary: Login to get token
+      description: Login to get token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserItem'
+      responses:
+        '200':
+          description: 'Authentification success'
+        '500':
+          description: 'The server cannot loggin the user'
+
+  ########## CONSTRAINT ##########
+  # /constraint:
+  #   get:
+  #   post:
+  #   put:
+  #   delete:
+
+components:
+  schemas:
+    UserItem:
+      type: object
+      required:
+        - username
+        - password
+        - email
+      properties:
+        _id:
+          type: string
+          example: 5e714378d8bc011255e940f9
+        password:
+          type : string
+          example: mySecretKey
+        username:
+          type: string
+          example: DarkSasukeXXXofDoom
+        email:
+          type: string
+          example: paul.aguila@gmail.com
+        firstname:
+          type: string
+          example: Paul
+        lastname:
+          type: string
+          example: Aguila
